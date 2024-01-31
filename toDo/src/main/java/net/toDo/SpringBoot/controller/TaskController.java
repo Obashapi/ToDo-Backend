@@ -4,11 +4,16 @@ import lombok.AllArgsConstructor;
 import net.toDo.SpringBoot.entity.Task;
 import net.toDo.SpringBoot.service.TaskService;
 import org.apache.catalina.User;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @AllArgsConstructor
@@ -29,11 +34,36 @@ public class TaskController {
         return new ResponseEntity<>(task,HttpStatus.OK);
     }
 
+
+//    @GetMapping()
+//    public Page<Task> geAllTasks(@RequestParam(defaultValue="0")int page,@RequestParam(defaultValue = "3")int size){
+//        Pageable paging= PageRequest.of(page, size);
+//        return taskService.getAllTasks(paging);
+//    }
+
     @GetMapping()
-    public ResponseEntity<List<Task>>getAllTasks(){
-        List<Task>tasks=taskService.getAllTasks();
-        return  new ResponseEntity<>(tasks,HttpStatus.OK);
+    public ResponseEntity<Map<String, Object>>getAllTasks(Pageable pageable){
+        var pagedRes=taskService.getAllTasks(pageable);
+
+        List<Task>tasks=pagedRes.getContent();
+        Map<String, Object> res = new HashMap<>();
+        res.put("content", tasks);
+        res.put("currentPage", pagedRes.getNumber());
+        res.put("total", pagedRes.getTotalElements());
+        res.put("pages", pagedRes.getTotalPages());
+
+        return new ResponseEntity<>(res, HttpStatus.OK);
     }
+
+
+
+
+
+//    @GetMapping()
+//    public ResponseEntity<List<Task>>getAllTasks(){
+//        List<Task>tasks=taskService.getAllTasks();
+//        return  new ResponseEntity<>(tasks,HttpStatus.OK);
+//    }
 
     @PutMapping("{id}")
     public ResponseEntity<Task> updateTask(@PathVariable("id") Long taskId,@RequestBody Task task){
