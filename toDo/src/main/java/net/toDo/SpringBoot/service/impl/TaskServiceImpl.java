@@ -8,7 +8,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import java.util.Date;
 import java.util.Optional;
 
 @Service
@@ -33,6 +33,10 @@ public class TaskServiceImpl implements TaskService {
         return taskRepository.findAll(pageable);
     }
 
+
+
+
+
     @Override
     public Task updateTask(Task task) {
         Task existingTask = taskRepository.findById(task.getId()).get();
@@ -40,9 +44,9 @@ public class TaskServiceImpl implements TaskService {
         existingTask.setDescription(task.getDescription());
         existingTask.setPriority(task.getPriority());
         existingTask.setStatus(task.getStatus());
-       existingTask.setDueDate(task.getDueDate());
-       existingTask.setCreationDate(task.getCreationDate());
-       Task updatedTask= taskRepository.save(existingTask);
+        existingTask.setDueDate(task.getDueDate());
+        existingTask.setCreationDate(new Date());
+        Task updatedTask= taskRepository.save(existingTask);
         return updatedTask;
     }
 

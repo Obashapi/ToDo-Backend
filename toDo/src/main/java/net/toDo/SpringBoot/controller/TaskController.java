@@ -3,14 +3,12 @@ package net.toDo.SpringBoot.controller;
 import lombok.AllArgsConstructor;
 import net.toDo.SpringBoot.entity.Task;
 import net.toDo.SpringBoot.service.TaskService;
-import org.apache.catalina.User;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,6 +22,9 @@ public class TaskController {
 
     @PostMapping
     public ResponseEntity<Task> createTask(@RequestBody Task task ){
+
+        task.setCreationDate(new Date());
+
         Task savedTask = taskService.createTask(task);
         return new ResponseEntity<>(savedTask, HttpStatus.CREATED);
     }
@@ -35,11 +36,6 @@ public class TaskController {
     }
 
 
-//    @GetMapping()
-//    public Page<Task> geAllTasks(@RequestParam(defaultValue="0")int page,@RequestParam(defaultValue = "3")int size){
-//        Pageable paging= PageRequest.of(page, size);
-//        return taskService.getAllTasks(paging);
-//    }
 
     @GetMapping()
     public ResponseEntity<Map<String, Object>>getAllTasks(Pageable pageable){
@@ -56,16 +52,7 @@ public class TaskController {
     }
 
 
-
-
-
-//    @GetMapping()
-//    public ResponseEntity<List<Task>>getAllTasks(){
-//        List<Task>tasks=taskService.getAllTasks();
-//        return  new ResponseEntity<>(tasks,HttpStatus.OK);
-//    }
-
-    @PutMapping("{id}")
+    @PatchMapping("{id}")
     public ResponseEntity<Task> updateTask(@PathVariable("id") Long taskId,@RequestBody Task task){
         task.setId(taskId);
          Task updatedUser=taskService.updateTask(task);
